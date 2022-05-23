@@ -1,5 +1,5 @@
 import React, { useReducer } from 'react';
-import { VictoryChart, VictoryBar, VictoryTheme } from 'victory';
+import { VictoryChart, VictoryBar, VictoryTheme, VictoryAxis } from 'victory';
 import './App.css';
 
 const initialState = {
@@ -76,7 +76,10 @@ const handle = {
     const periods = rawPeriods.slice(0, 24);
 
     const temperatures = periods.map((item: any) => {
+      const endTimeDate = new Date(item.endTime);
+      const endTimeHour = endTimeDate.getHours();
       return {
+        label: `${item.temperature}°`,
         x: item.endTime,
         y: item.temperature,
       };
@@ -90,7 +93,7 @@ const handle = {
     });
 
     const tileData = periods.map((item: any) => {
-      console.log('item', item);
+      // console.log('item', item);
       return {
         endTime: item.endTime,
         icon: item.icon,
@@ -114,7 +117,7 @@ const WeatherTile = (
   windDirection: string,
   shortForecast: string
 ) => {
-  console.log('hour', hour);
+  // console.log('hour', hour);
   return (
     <div>
       <p>{hour}</p>
@@ -128,7 +131,7 @@ const WeatherTile = (
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  console.log('STATE: ', state);
+  // console.log('STATE: ', state);
 
   return (
     <div className="App">
@@ -145,17 +148,52 @@ function App() {
           state.data.temperatures.length > 0 && (
             <>
               <VictoryChart
+                scale={{ x: 'time' }}
                 theme={VictoryTheme.material}
                 domainPadding={10}
                 height={200}
               >
                 <VictoryBar
-                  style={{ data: { fill: '#c43a31' } }}
+                  style={{
+                    data: { fill: '#c43a31' },
+                    labels: {
+                      fontSize: 5,
+                    },
+                  }}
                   data={state.data.temperatures}
                   categories={{
-                    x: state.data.temperatures.map((item: { x: string }) =>
-                      new Date(item.x).getHours()
+                    x: state.data.temperatures.map(
+                      (item: { x: string }) => `${item.x}`
                     ),
+                  }}
+                />
+                {state.data.temperatures.map(
+                  (item: { x: string }, i: number) => {
+                    return (
+                      <VictoryAxis
+                        label={'Time'}
+                        fixLabelOverlap
+                        key={i}
+                        style={{
+                          grid: { stroke: 'none' },
+                          tickLabels: { fontSize: 5, padding: 1, angle: 60 },
+                          axisLabel: { fontSize: 10, padding: 15 },
+                        }}
+                        tickFormat={(t: any) => {
+                          const date = new Date(t);
+                          return `${date.getHours()}:00`;
+                        }}
+                      />
+                    );
+                  }
+                )}
+                <VictoryAxis
+                  fixLabelOverlap
+                  dependentAxis
+                  label={'Temperature'}
+                  style={{
+                    tickLabels: { fontSize: 5, padding: 1 },
+                    axisLabel: { fontSize: 10, padding: 15 },
                   }}
                 />
               </VictoryChart>
@@ -168,8 +206,8 @@ function App() {
                   style={{ data: { fill: '#c43a31' } }}
                   data={state.data.windSpeed}
                   categories={{
-                    x: state.data.windSpeed.map((item: { x: string }) =>
-                      new Date(item.x).getHours()
+                    x: state.data.windSpeed.map(
+                      (item: { x: string }) => `${new Date(item.x).getHours()}`
                     ),
                   }}
                 />
