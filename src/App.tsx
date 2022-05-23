@@ -1,7 +1,6 @@
 import React, { useReducer } from 'react';
 import { VictoryChart, VictoryBar, VictoryTheme, VictoryAxis } from 'victory';
 import './App.css';
-import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
 
 const initialState = {
   loading: false,
@@ -77,8 +76,6 @@ const handle = {
     const periods = rawPeriods.slice(0, 24);
 
     const temperatures = periods.map((item: any) => {
-      const endTimeDate = new Date(item.endTime);
-      const endTimeHour = endTimeDate.getHours();
       return {
         label: `${item.temperature}°`,
         x: item.endTime,
@@ -124,10 +121,10 @@ const WeatherTile = (
   // console.log('hour', hour);
   return (
     <div className="weather-tile">
-      <p className={'hour-string'}>{hourString}</p>
+      <p id={'tile-string'}>{hourString}</p>
       <img src={image} />
-      <p>{windDirection}</p>
-      <p>{shortForecast}</p>
+      <p id={'tile-string'}>{windDirection}</p>
+      <p id={'tile-string'}>{shortForecast}</p>
     </div>
   );
 };
@@ -140,12 +137,12 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <p>SpaceX launch data analysis</p>
+        <p>Weather service forcast for Tysons Corner, VA </p>
         <button
           disabled={state.loading}
           onClick={() => action.getLaunches(dispatch)}
         >
-          Get Launches
+          Get Forecast!
         </button>
         {state.data &&
           state.data.temperatures &&
@@ -246,7 +243,6 @@ function App() {
                   dependentAxis
                   label={'Wind Speed (MPH)'}
                   style={{
-                    grid: { stroke: '#282d80' },
                     tickLabels: { fontSize: 5, padding: 1 },
                     axisLabel: { fontSize: 10, padding: 15 },
                   }}
