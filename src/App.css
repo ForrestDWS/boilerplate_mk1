@@ -33,8 +33,40 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  overflow: auto;
+  background-color: #4c537a;
+  scroll-padding: 50px;
+  box-sizing: border-box;
   width: 100%;
   height: 100%;
+  margin-bottom: 50px;
+}
+
+.tile-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.weather-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  /* scroll-snap-align: start; */
+  /* margin-right: 10px; */
+  flex: 0 0 auto;
+  margin: 20px;
+  width: 20%;
+  /* width: 300px; */
+  /* padding: 10px; */
+  /* margin-left: 20px; */
+  background-color: #353a57;
+}
+
+.hour-string {
+  font-size: 0.5em;
+  /* padding: 20px; */
 }
 
 @keyframes App-logo-spin {

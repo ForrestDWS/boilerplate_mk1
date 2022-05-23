@@ -1,6 +1,7 @@
 import React, { useReducer } from 'react';
 import { VictoryChart, VictoryBar, VictoryTheme, VictoryAxis } from 'victory';
 import './App.css';
+import { ScrollMenu, VisibilityContext } from 'react-horizontal-scrolling-menu';
 
 const initialState = {
   loading: false,
@@ -118,10 +119,12 @@ const WeatherTile = (
   windDirection: string,
   shortForecast: string
 ) => {
+  const date = new Date(hour);
+  const hourString = date.getHours() + ':00';
   // console.log('hour', hour);
   return (
-    <div>
-      <p>{hour}</p>
+    <div className="weather-tile">
+      <p className={'hour-string'}>{hourString}</p>
       <img src={image} />
       <p>{windDirection}</p>
       <p>{shortForecast}</p>
@@ -250,14 +253,17 @@ function App() {
                 />
               </VictoryChart>
               <div className="tile-parent">
-                {state.data.tileData.map((item: any, index: number) => {
-                  return WeatherTile(
-                    item.endTime,
-                    item.icon,
-                    item.windDirection,
-                    item.shortForecast
-                  );
-                })}
+                {/* {renderWeatherTiles()} */}
+                <div className="tile-container">
+                  {state.data.tileData.map((item: any, index: number) => {
+                    return WeatherTile(
+                      item.endTime,
+                      item.icon,
+                      item.windDirection,
+                      item.shortForecast
+                    );
+                  })}
+                </div>
               </div>
             </>
           )}
