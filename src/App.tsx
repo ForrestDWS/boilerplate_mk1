@@ -30,8 +30,8 @@ const reducer = (state: any, action: { type: any; payload: any }) => {
     case actionType.GET_LAUNCHES_ERROR:
       return {
         loading: false,
-        data: action.payload,
-        error: '',
+        data: '',
+        error: true,
       };
     default:
       return state;
@@ -88,7 +88,8 @@ const handle = {
     const windSpeed = periods.map((item: any) => {
       return {
         x: item.endTime,
-        y: item.windSpeed,
+        y: parseInt(item.windSpeed.slice(0, item.windSpeed.length - 4)),
+        // label: `${item.windSpeed}`,
       };
     });
 
@@ -131,7 +132,7 @@ const WeatherTile = (
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  // console.log('STATE: ', state);
+  console.log('STATE: ', state);
 
   return (
     <div className="App">
@@ -190,7 +191,7 @@ function App() {
                 <VictoryAxis
                   fixLabelOverlap
                   dependentAxis
-                  label={'Temperature'}
+                  label={'Temperature (F)'}
                   style={{
                     tickLabels: { fontSize: 5, padding: 1 },
                     axisLabel: { fontSize: 10, padding: 15 },
@@ -203,12 +204,48 @@ function App() {
                 height={200}
               >
                 <VictoryBar
-                  style={{ data: { fill: '#c43a31' } }}
+                  style={{
+                    data: { fill: '#c43a31' },
+                    labels: {
+                      fontSize: 5,
+                      padding: -1,
+                      angle: -70,
+                      fill: '#dfdfdf',
+                    },
+                  }}
                   data={state.data.windSpeed}
                   categories={{
                     x: state.data.windSpeed.map(
-                      (item: { x: string }) => `${new Date(item.x).getHours()}`
+                      (item: { x: string }) => `${item.x}`
                     ),
+                  }}
+                />
+                {state.data.windSpeed.map((item: { x: string }, i: number) => {
+                  return (
+                    <VictoryAxis
+                      label={'Time'}
+                      fixLabelOverlap
+                      key={i}
+                      style={{
+                        grid: { stroke: 'none' },
+                        tickLabels: { fontSize: 5, padding: 1, angle: 60 },
+                        axisLabel: { fontSize: 10, padding: 15 },
+                      }}
+                      tickFormat={(t: any) => {
+                        const date = new Date(t);
+                        return `${date.getHours()}:00`;
+                      }}
+                    />
+                  );
+                })}
+                <VictoryAxis
+                  fixLabelOverlap
+                  dependentAxis
+                  label={'Wind Speed (MPH)'}
+                  style={{
+                    grid: { stroke: '#282d80' },
+                    tickLabels: { fontSize: 5, padding: 1 },
+                    axisLabel: { fontSize: 10, padding: 15 },
                   }}
                 />
               </VictoryChart>
